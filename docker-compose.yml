@@ -1,0 +1,65 @@
+
+services:
+  bank_db_instance:
+    image: postgres:latest
+    container_name: bank_db_instance
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Lf9FvPmzgA8Sn2ZpSCTa8jreEE4uA6sgA
+      POSTGRES_DB: bank_db
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - bank_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  bank_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bank_app
+    restart: on-failure
+    depends_on:
+      bank_db_instance:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: 'postgresql://postgres:Lf9FvPmzgA8Sn2ZpSCTa8jreEE4uA6sgA@bank_db_instance:5432/bank_db?schema=public'
+      JWT_SECRET: supersecretpasswordSooftChallenge2025!!!
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./src:/usr/src/app/src
+      - ./prisma:/usr/src/app/prisma
+    networks:
+      - bank_network
+    command: >
+      sh -c "npx prisma migrate dev --name init && npx prisma migrate deploy && pnpm start"
+
+  load_bank_data:
+    build:
+      context: .
+      dockerfile: Dockerfile.seed
+    container_name: load_bank_data
+    depends_on:
+      bank_db_instance:
+        condition: service_healthy
+      bank_app:
+        condition: service_started
+    environment:
+      DATABASE_URL: "postgresql://postgres:Lf9FvPmzgA8Sn2ZpSCTa8jreEE4uA6sgA@bank_db_instance:5432/bank_db?schema=public"
+    networks:
+      - bank_network
+
+networks:
+  bank_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
