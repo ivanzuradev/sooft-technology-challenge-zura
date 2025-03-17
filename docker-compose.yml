@@ -40,7 +40,7 @@ services:
     networks:
       - bank_network
     command: >
-      sh -c "npx prisma migrate dev --name init && npx prisma migrate deploy && pnpm start"
+      sh -c "npx prisma migrate deploy && pnpm start"
 
   load_bank_data:
     build:
@@ -53,7 +53,8 @@ services:
       bank_app:
         condition: service_started
     environment:
-      DATABASE_URL: "postgresql://postgres:Lf9FvPmzgA8Sn2ZpSCTa8jreEE4uA6sgA@bank_db_instance:5432/bank_db?schema=public"
+      DATABASE_URL: 'postgresql://postgres:Lf9FvPmzgA8Sn2ZpSCTa8jreEE4uA6sgA@bank_db_instance:5432/bank_db?schema=public'
+      JWT_SECRET: supersecretpasswordSooftChallenge2025!!!
     networks:
       - bank_network
 

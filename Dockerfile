@@ -1,15 +1,14 @@
-FROM node:22.11.0
+FROM node:22
 
 WORKDIR /usr/src/app
 
 COPY package.json ./
 COPY prisma/ ./prisma/
-RUN rm -Rf prisma/migrations
 
 RUN npm i -g pnpm
+RUN pnpm install
 RUN pnpm add @prisma/client
 RUN npx prisma generate
-RUN pnpm install
 
 COPY . .
 

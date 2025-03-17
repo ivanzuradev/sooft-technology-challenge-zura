@@ -4,13 +4,12 @@ WORKDIR /usr/src/app
 
 COPY package.json ./
 COPY prisma/ ./prisma/
-RUN rm -Rf prisma/migrations
 COPY tsconfig.json ./tsconfig.json
 
 RUN npm i -g pnpm
+RUN pnpm install
 RUN pnpm add @prisma/client
 RUN npx prisma generate
-RUN pnpm install
 RUN pnpm add -D tsconfig-paths ts-node typescript
 
 COPY ./prisma/seed.ts ./prisma/
