@@ -172,6 +172,8 @@ El sistema implementa autenticación basada en JWT:
 
 Ademas de los testing que tiene la app se puede probar de la siguiente manera. Deben estar levantados todos los servicios del docker-compose
 
+También puede probar desde swagger: [Acá](http://localhost:3000/api)
+
 ### Token JWT
 Para pegarle a las apis se necesita loguearse y obtener un token. Para eso podemos ejecutar el siguiente endpoint:
 
